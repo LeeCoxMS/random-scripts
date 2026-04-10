@@ -72,6 +72,98 @@ Set-Location .\scripts\azure-local
 
 After the script completes, reboot the host before partition configuration.
 
+## Troubleshooting
+
+### Script must run as Administrator
+
+Symptom:
+
+- The script exits immediately with an administrator error.
+
+Fix:
+
+- Open PowerShell as Administrator and run the script again.
+
+### Hyper-V requirement check fails
+
+Symptom:
+
+- The script reports that Hyper-V is required.
+
+Fix:
+
+- Install the Hyper-V role and restart the host.
+- Verify role state with:
+
+```powershell
+Get-WindowsFeature -Name Hyper-V
+```
+
+### No PCI display adapters detected
+
+Symptom:
+
+- The script reports no PCI display adapters.
+
+Fix:
+
+- Confirm GPU is visible in Device Manager.
+- Verify display devices with:
+
+```powershell
+Get-PnpDevice -Class Display
+```
+
+### WDAC blocks setup.exe
+
+Symptom:
+
+- setup.exe does not run under WDAC enforced environments.
+
+Fix:
+
+- Use extracted NVIDIA GRID media and allow the script to install via INF using pnputil.
+- Confirm the selected folder contains Display.Driver and at least one INF file.
+
+### Display.Driver folder not found
+
+Symptom:
+
+- Folder selection succeeds, but script cannot find Display.Driver.
+
+Fix:
+
+- Extract the NVIDIA GRID package fully before running.
+- Select the root extracted folder, not a parent ZIP location.
+
+### No GPU-P capable devices after install
+
+Symptom:
+
+- Get-VMHostPartitionableGpu returns no devices.
+
+Fix:
+
+- Reboot the host after driver installation.
+- Re-run validation:
+
+```powershell
+Get-VMHostAssignableDevice
+Get-VMHostPartitionableGpu
+```
+
+### NVIDIA mitigation driver cleanup fails
+
+Symptom:
+
+- nvpcf service or nvpcf.sys cannot be removed.
+
+Fix:
+
+- Ensure no processes are locking the file.
+- Re-run from elevated session.
+- If needed, reboot and run the script again before additional GPU configuration.
+
 ## Safety Notes
 
 - Read script help before execution: `Get-Help <script name> -Detailed`
