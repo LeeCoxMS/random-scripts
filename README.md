@@ -49,6 +49,29 @@ Invoke-ScriptAnalyzer -Path .\scripts -Recurse -Settings .\PSScriptAnalyzerSetti
 Invoke-Pester -Path .\tests
 ```
 
+## Script Usage
+
+### Convert DDA GPU to GPU-P
+
+Script: `scripts/azure-local/Convert-GpuDdaToGpuP.ps1`
+
+What it does:
+
+- Removes existing DDA GPU assignments from host
+- Cleans NVIDIA mitigation driver (`nvpcf`) if present
+- Ensures required GPU-P platform features are enabled
+- Detects WDAC enforcement and installs NVIDIA GRID driver accordingly
+- Displays post-install validation output for GPU-P readiness
+
+Run from an elevated PowerShell session:
+
+```powershell
+Set-Location .\scripts\azure-local
+.\Convert-GpuDdaToGpuP.ps1
+```
+
+After the script completes, reboot the host before partition configuration.
+
 ## Safety Notes
 
 - Read script help before execution: `Get-Help <script name> -Detailed`

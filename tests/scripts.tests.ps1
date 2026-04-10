@@ -1,7 +1,16 @@
 Describe 'Script repository smoke tests' {
     It 'contains starter scripts' {
-        Test-Path -Path "$PSScriptRoot\..\scripts\azure-local\Test-AzureLocalReadiness.ps1" | Should -BeTrue
-        Test-Path -Path "$PSScriptRoot\..\scripts\hyper-v\New-HyperVVMTemplate.ps1" | Should -BeTrue
-        Test-Path -Path "$PSScriptRoot\..\scripts\utilities\Get-HostInventory.ps1" | Should -BeTrue
+        $requiredScripts = @(
+            "$PSScriptRoot\..\scripts\azure-local\Test-AzureLocalReadiness.ps1",
+            "$PSScriptRoot\..\scripts\azure-local\Convert-GpuDdaToGpuP.ps1",
+            "$PSScriptRoot\..\scripts\hyper-v\New-HyperVVMTemplate.ps1",
+            "$PSScriptRoot\..\scripts\utilities\Get-HostInventory.ps1"
+        )
+
+        foreach ($scriptPath in $requiredScripts) {
+            if (-not (Test-Path -Path $scriptPath)) {
+                throw "Missing expected script: $scriptPath"
+            }
+        }
     }
 }
