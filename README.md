@@ -72,6 +72,26 @@ Set-Location .\scripts\azure-local
 
 After the script completes, reboot the host before partition configuration.
 
+### Convert GPU-P to DDA
+
+Script: `scripts/azure-local/Convert-GpuPToGpuDda.ps1`
+
+What it does:
+
+- Detects VMs with GPU partition adapters
+- Optionally removes VM GPU partition adapters (`-RemoveGpuPartitionAdapters`)
+- Disables host GPU devices and dismounts them for DDA assignment
+- Shows assignable-device validation output
+
+Run from an elevated PowerShell session:
+
+```powershell
+Set-Location .\scripts\azure-local
+.\Convert-GpuPToGpuDda.ps1 -RemoveGpuPartitionAdapters
+```
+
+Use `-WhatIf` first to preview actions.
+
 ## Troubleshooting
 
 ### Script must run as Administrator
@@ -163,6 +183,29 @@ Fix:
 - Ensure no processes are locking the file.
 - Re-run from elevated session.
 - If needed, reboot and run the script again before additional GPU configuration.
+
+### GPU-P to DDA conversion stops due to VM partition adapters
+
+Symptom:
+
+- The reverse script exits and reports existing GPU partition adapters.
+
+Fix:
+
+- Re-run with `-RemoveGpuPartitionAdapters`.
+- Confirm target VMs are in a maintenance state before removing adapters.
+
+### Dismount or disable operations fail during GPU-P to DDA
+
+Symptom:
+
+- `Disable-PnpDevice` or `Dismount-VMHostAssignableDevice` returns errors.
+
+Fix:
+
+- Verify the session is elevated.
+- Ensure no VM currently owns the target GPU path.
+- Reboot the host, then retry conversion before assigning devices.
 
 ## Safety Notes
 
